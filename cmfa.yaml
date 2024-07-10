@@ -1,4 +1,4 @@
-proxy-providers:
+ proxy-providers:
   🛫 我的机场:
     type: http
     # 修改为你的 Clash 订阅链接
@@ -164,7 +164,7 @@ dns:
     - '+.uu.163.com'
     - 'ps.res.netease.com'
     - '+.oray.com'
- nameserver:
+  nameserver:
     - https://doh.pub/dns-query
     - https://dns.alidns.com/dns-query
 
