@@ -2,19 +2,14 @@
 // 部署完成后在网址后面加上这个，获取订阅器默认节点，/auto
 
 let mytoken= ['auto'];//快速订阅访问入口, 留空则不启动快速订阅
-let myforbidden= ['token','client','subscribe'];//快速订阅访问入口, 留空则不启动快速订阅
+let myforbidden= ['token','client','subscribe','cf-workers-sub'];//快速订阅访问入口, 留空则不启动快速订阅
 
 // 设置优选地址，不带端口号默认443，TLS订阅生成
 let addresses = [
-	'www.aluminiumchina.com:2087#CF',
-	'dk-6637.com:2053#CF-Byoip',
-	'dweb.link:443#CF-Byoip',
-	'woofweb.royalegame.win:443#CF-Byoip',
+	'visa.cn:2087#CF',
 	'api.console.anthropic.com:443#CF-Byoip',
-	'cdn.webflow-sai.com:443#CF',
-	'avatars-preprod.boomerang.bet:443#CF',
-	'cf-saas.asia:2096#CF',
-	'visa.cn:443#CF',
+	'cf-cname.xingpingcn.top:2096#CF',
+	'cf.chinam.eu.org:2096#CF',
 ];
 
 // 设置优选地址api接口
@@ -39,9 +34,10 @@ let addressesnotlsapi = [
 	'https://raw.githubusercontent.com/cmliu/CFcdnVmess2sub/main/addressesapi.txt', //可参考内容格式 自行搭建。
 ];
 
-let DLS = 3500;//速度下限
+let DLS = 4000;//速度下限
 let addressescsv = [
 	//'https://raw.githubusercontent.com/cmliu/WorkerVless2sub/main/addressescsv.csv',
+	'https://txt.danfeng.workers.dev/krkt.csv?token=vless',
 	'https://txt.danfeng.workers.dev/dmit.csv?token=vless',
 	'https://txt.danfeng.workers.dev/aliyun.csv?token=vless',
 	'https://txt.danfeng.workers.dev/kirino.csv?token=vless', //iptest测速结果文件。
@@ -51,7 +47,7 @@ let cftg = [
 	'https://cfno1.pages.dev/pure',//可参考内容格式 自行搭建。
 ];
 
-let subconverter = "apiurl.v1.mk"; //在线订阅转换后端，目前使用肥羊的订阅转换功能。支持自建psub 可自行搭建https://github.com/bulianglin/psub
+let subconverter = "url.v1.mk"; //在线订阅转换后端，目前使用肥羊的订阅转换功能。支持自建psub 可自行搭建https://github.com/bulianglin/psub
 let subconfig = "https://gist.github.com/jklolixxs/b53d315cd1cede23af83322c26ce34ec/raw/AmyTelecom.ini"; //订阅转换配置文件
 let noTLS = false; //改为 true , 将不做域名判断 始终返回noTLS节点
 let link = '';
@@ -102,7 +98,7 @@ async function sendMessage(type, ip, add_data = "") {
 	}
 }
 
-let MamaJustKilledAMan = ['telegram','twitter','python-requests','wget'];
+let MamaJustKilledAMan = ['telegram','twitter','python-requests','curl','webrequesthelper','wget','cf-workers-sub','null','go-http-client'];
 
 async function getAddressesapi(api) {
 	if (!api || api.length === 0) {
@@ -204,7 +200,7 @@ async function getAddressescsv(tls) {
 					if (tem.indexOf('LAX') != -1 || tem.indexOf('SJC') != -1) {
 						tem = 'US 美国';
 					}
-					else if (tem.indexOf('NRT') != -1) {
+					else if (tem.indexOf('NRT') != -1 || tem.indexOf('FUK') != -1 || tem.indexOf('KIX') != -1) {
 						tem = 'JP 日本';
 					}
 					else if (tem.indexOf('SIN') != -1) {
@@ -216,10 +212,13 @@ async function getAddressescsv(tls) {
 					else if (tem.indexOf('HKG') != -1) {
 						tem = 'HK 香港';
 					}
+					else if (tem.indexOf('TPE') != -1) {
+						tem = 'TW 台湾';
+					}
 					else if (tem.indexOf('LHR') != -1 || tem.indexOf('AMS') != -1 || tem.indexOf('WAW') != -1) {
 						tem = 'EU 欧洲';
 					}
-					const dataCenter = tem + ' ' + columns[networkDelayIndex];
+					const dataCenter = tem;
 					const formattedAddress = `${ipAddress}:${port}#${dataCenter}`;
 					newAddressescsv.push(formattedAddress);
 				}
@@ -471,7 +470,7 @@ export default {
 				},
 			});
 		} else if ( (userAgent.includes('clash') || (format === 'clash' && !userAgent.includes('subconverter')) ) && !userAgent.includes('nekobox') && !userAgent.includes('cf-workers-sub')) {
-			const subconverterUrl = `https://${subconverter}/sub?target=clash&url=${encodeURIComponent(request.url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&udp=false&xudp=false&expand=true&scv=true&fdn=false&sort=false&new_name=true`;
+			const subconverterUrl = `https://${subconverter}/sub?target=clash&url=${encodeURIComponent(request.url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&udp=false&xudp=true&expand=true&scv=true&fdn=false&sort=false&new_name=true`;
 
 			try {
 				const subconverterResponse = await fetch(subconverterUrl);
