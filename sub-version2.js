@@ -16,7 +16,7 @@ let subProtocol = 'https';
 let noTLS = 'false';
 let link;
 let 隧道版本作者 = atob('ZWQ=');
-let 获取代理IP;
+let 获取代理IP = 'true';
 let proxyIPs = [
 	atob('cHJveHlpcC5meHhrLmRlZHluLmlv'),
 ];
@@ -29,7 +29,7 @@ let 临时中转域名接口 = '';
 let EndPS = '';
 let 协议类型 = atob(`\u0056\u006b\u0078\u0046\u0055\u0031\u004d\u003d`);
 let FileName = 'SUB-BestCFip';
-let SUBUpdateTime = 6;
+let SUBUpdateTime = 1;
 let total = 24;
 let timestamp = 4102329600000;
 const regex = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|\[.*\]):?(\d+)?#?(.*)?$/;
@@ -38,12 +38,32 @@ let fakeHostName;
 let httpsPorts = ["2053", "2083", "2087", "2096", "8443"];
 let 有效时间 = 7;
 let 更新时间 = 3;
-let MamaJustKilledAMan = ['周润发公益订阅器','workervless2sub','telegram','twitter','python-requests','webrequesthelper','miaoko'];
-let myforbiddenhost = ['3333r567.11890604.xyz'];
+let MamaJustKilledAMan = ['fuckua','wget','axios','go-resty','cf-workers-sub','mozilla','koipy','周润发公益订阅器','workervless2sub','telegram','twitter','python-requests','webrequesthelper','miaoko'];
+let myforbiddenhost = ['cfxr.eu.org','o0w0o.qzz.io','3333r567.11890604.xyz','ekt.me','www.bing.com','lzj.pp.ua','lzjnb.shop'];
 let proxyIPPool = [];
 let socks5Data;
-let alpn = 'h3';
-let 网络备案 = `<a href='https://image.443888.xyz'>免费图床</a>`;//写你自己的维护者广告
+let alpn = 'http/1.1';
+let 网络备案 = `<a href="https://t.me/danfeng_chat" target="_blank" rel="noopener" class="tg-link">
+Telegram交流群
+</a>
+
+<style>
+.tg-link {
+background: linear-gradient(90deg, #ff6b6b, #f7d794, #1dd1a1, #54a0ff, #5f27cd);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+font-weight: bold;
+font-size: 20px;
+text-decoration: none;
+transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.tg-link:hover {
+text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 
+			 0 0 20px rgba(255, 255, 255, 0.6);
+transform: scale(1.05);
+}
+</style>`;//写你自己的维护者广告
 let 额外ID = '0';
 let 加密方式 = 'auto';
 let 网站图标, 网站头像, 网站背景, xhttp = '';
@@ -157,31 +177,45 @@ async function 整理测速结果(tls) {
 
 	// 把机场映射和计数器移到函数外，保持全局唯一
 	const airportToRegion = {
+		// 美国
 		'LAX': 'US🌎美国', 'SJC': 'US🌎美国', 'JFK': 'US🌎美国', 'SFO': 'US🌎美国', 'SEA': 'US🌎美国',
-		'YYZ': 'CA🌎加拿大', 'YVR': 'CA🌎加拿大', 'YUL': 'CA🌎加拿大',
-		'LHR': 'GB🌍英国', 'LGW': 'GB🌍英国', 'MAN': 'GB🌍英国',
-		'AMS': 'NL🌍荷兰', 'WAW': 'PL🌍波兰', 'CDG': 'FR🌍法国', 'ORY': 'FR🌍法国',
-		'FRA': 'DE🌍德国', 'MUC': 'DE🌍德国', 'TXL': 'DE🌍德国',
-		'FCO': 'IT🌍意大利', 'MXP': 'IT🌍意大利', 'MAD': 'ES🌍西班牙', 'BCN': 'ES🌍西班牙',
-		'PEK': 'CN🔒中国', 'PVG': 'CN🔒中国', 'SHA': 'CN🔒中国', 'CAN': 'CN🔒中国', 'SZX': 'CN🔒中国',
-		'CTU': 'CN🔒中国', 'HGH': 'CN🔒中国', 'XMN': 'CN🔒中国',
+		'ORD': 'US🌎美国', 'ATL': 'US🌎美国', 'IAD': 'US🌎美国', 'DFW': 'US🌎美国', 'PHX': 'US🌎美国',
+		'PDX': 'US🌎美国', 'MIA': 'US🌎美国', 'BOS': 'US🌎美国', 'DEN': 'US🌎美国', 'LAS': 'US🌎美国',
+	
+		// 加拿大
+		'YYZ': 'CA🌎加拿大', 'YVR': 'CA🌎加拿大', 'YUL': 'CA🌎加拿大', 'YYC': 'CA🌎加拿大',
+	
+		// 英国 / 欧洲
+		'LHR': 'GB🌍英国', 'LGW': 'GB🌍英国', 'MAN': 'GB🌍英国', 'AMS': 'NL🌍荷兰',
+		'CDG': 'FR🌍法国', 'ORY': 'FR🌍法国', 'FRA': 'DE🌍德国', 'MUC': 'DE🌍德国', 'TXL': 'DE🌍德国',
+		'WAW': 'PL🌍波兰', 'VIE': 'AT🌍奥地利', 'CPH': 'DK🌍丹麦', 'ARN': 'SE🌍瑞典',
+		'MAD': 'ES🌍西班牙', 'BCN': 'ES🌍西班牙', 'FCO': 'IT🌍意大利', 'MXP': 'IT🌍意大利',
+	
+		// 澳大利亚 / 新西兰
+		'SYD': 'AU🌏澳大利亚', 'MEL': 'AU🌏澳大利亚', 'BNE': 'AU🌏澳大利亚', 'PER': 'AU🌏澳大利亚',
+		'AKL': 'NZ🌏新西兰', 'WLG': 'NZ🌏新西兰',
+	
+		// 亚洲
 		'HKG': 'HK🔒香港', 'TPE': 'TW🔒台湾', 'KHH': 'TW🔒台湾',
 		'NRT': 'JP🌏日本', 'HND': 'JP🌏日本', 'KIX': 'JP🌏日本', 'FUK': 'JP🌏日本', 'CTS': 'JP🌏日本', 'OKA': 'JP🌏日本',
 		'ICN': 'KR🌏韩国', 'GMP': 'KR🌏韩国',
-		'SIN': 'SG🌏新加坡',
-		'KUL': 'MY🌏马来西亚', 'PEN': 'MY🌏马来西亚',
-		'BKK': 'TH🌏泰国', 'DMK': 'TH🌏泰国',
-		'CGK': 'ID🌏印度尼西亚', 'DPS': 'ID🌏印度尼西亚',
-		'MNL': 'PH🌏菲律宾', 'CEB': 'PH🌏菲律宾',
-		'SGN': 'VN🌏越南', 'HAN': 'VN🌏越南',
+		'SIN': 'SG🌏新加坡', 'KUL': 'MY🌏马来西亚', 'PEN': 'MY🌏马来西亚',
+		'BKK': 'TH🌏泰国', 'DMK': 'TH🌏泰国', 'CGK': 'ID🌏印度尼西亚', 'DPS': 'ID🌏印度尼西亚',
+		'MNL': 'PH🌏菲律宾', 'CEB': 'PH🌏菲律宾', 'SGN': 'VN🌏越南', 'HAN': 'VN🌏越南',
+	
+		// 中国大陆
+		'PEK': 'CN🔒中国', 'PVG': 'CN🔒中国', 'SHA': 'CN🔒中国', 'CAN': 'CN🔒中国', 'SZX': 'CN🔒中国',
+		'CTU': 'CN🔒中国', 'HGH': 'CN🔒中国', 'XMN': 'CN🔒中国',
+	
+		// 南亚 / 中东 / 非洲
 		'DEL': 'IN🌏印度', 'BOM': 'IN🌏印度', 'MAA': 'IN🌏印度',
-		'ULN': 'MN🌏蒙古', 'DAC': 'BD🌏孟加拉',
+		'DXB': 'AE🛰️阿联酋', 'AUH': 'AE🛰️阿联酋',
 		'ISB': 'PK🌏巴基斯坦', 'KHI': 'PK🌏巴基斯坦',
 		'CMB': 'LK🌏斯里兰卡', 'KTM': 'NP🌏尼泊尔',
-		'RGN': 'MM🌏缅甸', 'ALA': 'KZ🌏哈萨克斯坦',
-		'DXB': 'AE🛰️阿联酋', 'AUH': 'AE🛰️阿联酋',
-		'SVO': 'RU🛰️俄罗斯', 'DME': 'RU🛰️俄罗斯',
-		'IST': 'TR🛰️土耳其', 'JNB': 'ZA🛰️南非'
+		'JNB': 'ZA🛰️南非', 'IST': 'TR🛰️土耳其',
+	
+		// 俄罗斯 / 中亚
+		'SVO': 'RU🛰️俄罗斯', 'DME': 'RU🛰️俄罗斯', 'ALA': 'KZ🌏哈萨克斯坦', 'ULN': 'MN🌏蒙古', 'DAC': 'BD🌏孟加拉'
 	};
 
 // 连接符备选池（支持很多 CSV）
@@ -422,6 +456,7 @@ function generateFakeInfo(content, userID, hostName) {
 function generateRandomIP() {
 	return Array(4).fill(0).map(() => Math.floor(Math.random() * 256)).join('.');
 }
+
 const sanZiJing = [
 	"人之初", "性本善", "性相近", "习相远", "苟不教", "性乃迁", "教之道", "贵以专",
 	"昔孟母", "择邻处", "子不学", "断机杼", "窦燕山", "有义方", "教五子", "名俱扬",
@@ -469,6 +504,153 @@ function getNextSanZiJing() {
 	sanZiIndex = (sanZiIndex + 1) % sanZiJing.length; // 到末尾后从头开始
 	return id;
 }
+
+/**
+ * 根据请求 URL 返回 IP 列表
+ * - 前三行原封不动输出
+ * - 剩余部分按 ip:port 去重
+ * - 随机抽取 25 个节点，保证 US 至少 5 个
+ * - HK 3~8 个（随机，不固定）
+ * - 重写备注，格式：国家 ⚡ TG@danfeng_chat
+ * - 国家顺序排序 CN→HK→JP→KR→SG→TW→US→其他
+ * - ?numbers=all → 返回原数据，不做处理
+ * @param {Request} request - Cloudflare Worker Request 对象
+ * @param {string[]} allAddresses - 原始 IP 列表，每行 ip:port#备注
+ * @returns {string[]} - 处理后的 IP 列表
+ */
+function getProcessedAddresses(request, allAddresses) {
+	const url = new URL(request.url);
+	const numbersParam = url.searchParams.get('numbers');
+  
+	// numbers=all 直接返回原数据
+	if (numbersParam && numbersParam.toLowerCase() === 'all') {
+	  return allAddresses;
+	}
+  
+	// 前三行原样保留
+	const header = allAddresses.slice(0, 3);
+	const body = allAddresses.slice(3);
+  
+	// 按 ip:port 去重
+	const uniqueMap = new Map();
+	body.forEach(item => {
+	  const [ipPort, remark = ''] = item.split('#');
+	  if (!uniqueMap.has(ipPort)) {
+		uniqueMap.set(ipPort, remark);
+	  }
+	});
+	const unique = Array.from(uniqueMap, ([ipPort, remark]) => `${ipPort}#${remark}`);
+  
+	// 随机抽取 25 个，US ≥ 5，HK 3–8
+	const random25 = getRandomWithConstraints(unique, 25, 5, 3, 8);
+  
+	// 国家映射表
+	const mapping = [
+	  { keywords: ['HK', '香港'], value: 'HK' },
+	  { keywords: ['US', '美国', '美'], value: 'US' },
+	  { keywords: ['JP', '日本'], value: 'JP' },
+	  { keywords: ['KR', '韩国'], value: 'KR' },
+	  { keywords: ['SG', '新加坡'], value: 'SG' },
+	  { keywords: ['TW', '台湾'], value: 'TW' },
+	  { keywords: ['CN', '中国'], value: 'CN' },
+	  { keywords: ['GB', '英国'], value: 'GB' },
+	  { keywords: ['DE', '德国'], value: 'DE' },
+	  { keywords: ['FR', '法国'], value: 'FR' },
+	  { keywords: ['CA', '加拿大'], value: 'CA' },
+	  { keywords: ['AU', '澳大利亚'], value: 'AU' },
+	  { keywords: ['NZ', '新西兰'], value: 'NZ' },
+	  { keywords: ['RU', '俄罗斯'], value: 'RU' },
+	  { keywords: ['IN', '印度'], value: 'IN' },
+	  { keywords: ['TH', '泰国'], value: 'TH' },
+	  { keywords: ['MY', '马来西亚'], value: 'MY' },
+	  { keywords: ['VN', '越南'], value: 'VN' },
+	  { keywords: ['ID', '印度尼西亚'], value: 'ID' },
+	  { keywords: ['PH', '菲律宾'], value: 'PH' },
+	  { keywords: ['NL', '荷兰'], value: 'NL' },
+	  { keywords: ['SE', '瑞典'], value: 'SE' },
+	  { keywords: ['CH', '瑞士'], value: 'CH' },
+	  { keywords: ['ES', '西班牙'], value: 'ES' },
+	  { keywords: ['IT', '意大利'], value: 'IT' },
+	  { keywords: ['BE', '比利时'], value: 'BE' },
+	  { keywords: ['FI', '芬兰'], value: 'FI' },
+	  { keywords: ['NO', '挪威'], value: 'NO' },
+	  { keywords: ['DK', '丹麦'], value: 'DK' },
+	];
+  
+	const rewriteRemark = (remark) => {
+	  const upper = remark.toUpperCase();
+	  for (const rule of mapping) {
+		if (rule.keywords.some(k => upper.includes(k.toUpperCase()))) {
+		  return `${rule.value}⚡TG@danfeng_chat`;
+		}
+	  }
+	  return `${remark}⚡TG@danfeng_chat`;
+	};
+  
+	// 重写备注
+	const rewritten = random25.map(item => {
+	  const [ipPort, remark = ''] = item.split('#');
+	  return `${ipPort}#${rewriteRemark(remark)}`;
+	});
+  
+	// 国家顺序排序：CN → HK → JP → KR → SG → TW → US → 其他字母
+	const countryOrder = ['CN', 'HK', 'JP', 'KR', 'SG', 'TW', 'US'];
+	rewritten.sort((a, b) => {
+	  const rA = a.split('#')[1].split('⚡')[0];
+	  const rB = b.split('#')[1].split('⚡')[0];
+	  const iA = countryOrder.indexOf(rA);
+	  const iB = countryOrder.indexOf(rB);
+	  if (iA !== -1 && iB !== -1) return iA - iB;
+	  if (iA !== -1) return -1;
+	  if (iB !== -1) return 1;
+	  return rA.localeCompare(rB);
+	});
+  
+	return header.concat(rewritten);
+  }
+  
+  // 随机抽取函数，保证 US ≥ minUS，HK 介于 minHK 和 maxHK 之间
+  function getRandomWithConstraints(array, totalCount = 25, minUS = 5, minHK = 3, maxHK = 8) {
+	const usNodes = array.filter(item => /#.*US/i.test(item));
+	const hkNodes = array.filter(item => /#.*HK/i.test(item));
+	const otherNodes = array.filter(item => !/#.*US/i.test(item) && !/#.*HK/i.test(item));
+  
+	// US 至少 minUS
+	const usCount = Math.min(usNodes.length, minUS);
+	const selectedUS = getRandomSubset(usNodes, usCount);
+  
+	// HK 在 minHK ~ maxHK 之间（且不超过总数）
+	let hkMin = Math.min(hkNodes.length, minHK);
+	let hkMax = Math.min(hkNodes.length, maxHK);
+	let hkCount = hkMin + Math.floor(Math.random() * (hkMax - hkMin + 1));
+	const selectedHK = getRandomSubset(hkNodes, hkCount);
+  
+	// 剩余补足
+	const remainingCount = totalCount - selectedUS.length - selectedHK.length;
+	const selectedOther = getRandomSubset(otherNodes, remainingCount);
+  
+	return shuffleArray([...selectedUS, ...selectedHK, ...selectedOther]);
+  }
+  
+  // 基础随机抽取
+  function getRandomSubset(array, count) {
+	const shuffled = array.slice();
+	for (let i = shuffled.length - 1; i > 0; i--) {
+	  const j = Math.floor(Math.random() * (i + 1));
+	  [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled.slice(0, count);
+  }
+  
+  // 洗牌
+  function shuffleArray(array) {
+	const arr = array.slice();
+	for (let i = arr.length - 1; i > 0; i--) {
+	  const j = Math.floor(Math.random() * (i + 1));
+	  [arr[i], arr[j]] = [arr[j], arr[i]];
+	}
+	return arr;
+  }		
 
 function isValidIPv4(address) {
 	const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
@@ -612,7 +794,7 @@ export default {
 		} else 网站背景 = '';
 		网络备案 = env.BEIAN || env.BY || 网络备案;
 		const userAgentHeader = request.headers.get('User-Agent');
-		const userAgent = userAgentHeader ? userAgentHeader.toLowerCase() : "null";
+		const userAgent = userAgentHeader ? userAgentHeader.toLowerCase() : "fuckua/1.1";
 		const url = new URL(request.url);
 		const format = url.searchParams.get('format') ? url.searchParams.get('format').toLowerCase() : "null";
 		let host = "";
@@ -689,7 +871,7 @@ export default {
 		if (临时proxyIPs.length > 0) proxyIPs = 临时proxyIPs;
 		//console.log(proxyIPs);
 
-		if (快速订阅访问入口.length > 0 && 快速订阅访问入口.some(token => url.pathname.includes(token))) {
+		if (快速订阅访问入口.length > 0 && 快速订阅访问入口.some(token => url.pathname === `/${token}`)) {
 			host = "null";
 			if (env.HOST) {
 				const hosts = await 整理(env.HOST);
@@ -710,8 +892,7 @@ export default {
 					uuid = env.UUID || "null";
 				}
 			}
-
-			path = env.PATH || "/?ed=2560";
+            path = env.PATH || `/?ed=2560`;
 			sni = env.SNI || host;
 			type = env.TYPE || type;
 			隧道版本作者 = env.ED || 隧道版本作者;
@@ -728,10 +909,10 @@ export default {
 			await sendMessage(`#获取订阅 ${FileName}`, request.headers.get('CF-Connecting-IP'), `UA: ${userAgentHeader}\n域名: ${url.hostname}\n入口: ${url.pathname + url.search}`);
 		} else if (MamaJustKilledAMan.some(keyword => userAgent.includes(keyword)) || myforbiddenhost.some(token => request.url.includes(token))) {
 			
-			host = "fuck.you";
+			host = "Mama.Just.Killed.A.Man";
 			uuid = url.searchParams.get('uuid') || url.searchParams.get('password') || url.searchParams.get('pw');
 			path = url.searchParams.get('path');
-			sni = "fuck.you";
+			sni = "Mama.Just.Killed.A.Man";
 			type = url.searchParams.get('type') || type;
 			const mode = url.searchParams.get('mode') || null;
 			const extra = url.searchParams.get('extra') || null;
@@ -874,21 +1055,14 @@ export default {
 			"content-type": "text/plain; charset=utf-8",
 			"Profile-Update-Interval": `${SUBUpdateTime}`,
 			"Profile-Web-Page-Url": "https://image.443888.xyz",
-			"Subscription-Userinfo": `upload=${UD}; download=${UD}; total=${total}; expire=${expire}`,
-			"X-Subscription-Name": "无限流量计划",
-	        "X-Server-Region": "🌏 Global",
-	        "X-Worker-Gen-Time": new Date().toISOString(),
-	        "X-Powered-By": "MySuperWorker"
+			"Subscription-Userinfo": `upload=${UD}; download=${UD}; total=${total}; expire=${expire}`
 		};
 
 		if (host.toLowerCase().includes('notls') || host.toLowerCase().includes('worker') || host.toLowerCase().includes('trycloudflare')) noTLS = 'true';
 		noTLS = env.NOTLS || noTLS;
 		let subConverterUrl = generateFakeInfo(url.href, uuid, host);
 		if (userAgent.includes('subconverter')) alpn = '';
-		if ((
-			!userAgent.includes('subconverter') &&
-			MamaJustKilledAMan.length > 0 &&
-			MamaJustKilledAMan.some(str => userAgent.includes(str))
+		if ((MamaJustKilledAMan.length > 0 &&MamaJustKilledAMan.some(str => userAgent.includes(str))
 		  ) ||
 		  myforbiddenhost.some(token => request.url.includes(token))) {
 
@@ -1015,6 +1189,7 @@ export default {
 			//随机IP
 			//随机端口
 			//三字经备注
+			const random20Addresses = getProcessedAddresses(request,uniqueAddresses);
 			const responseBody = uniqueAddresses.map(address => {
 				let port = "-1";
 				let addressid = address;
@@ -1294,8 +1469,8 @@ export default {
 
 				}).join('\n');
 			}
-
-			const responseBody = uniqueAddresses.map(address => {
+			const random20Addresses = getProcessedAddresses(request,uniqueAddresses);
+			const responseBody = random20Addresses.map(address => {
 				let port = "-1";
 				let addressid = address;
 
@@ -1477,6 +1652,67 @@ async function subHtml(request) {
 			<head>
 				<meta charset="UTF-8">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<style>
+                  .input-group label {
+                    color: gold;
+                  }
+                </style>
+				<style>
+				input::placeholder {
+					font-family: "SimHei", "Microsoft YaHei", sans-serif;
+					font-weight: normal;
+					color: #555555; /* 你可以换成任何你喜欢的纯色 */
+					letter-spacing: normal;
+					text-shadow: none;
+				  }
+				  
+				  /* Firefox */
+				  input::-moz-placeholder {
+					font-family: "SimHei", "Microsoft YaHei", sans-serif;
+					font-weight: normal;
+					color: #555555;
+					letter-spacing: normal;
+					text-shadow: none;
+				  }
+				  
+				  /* IE */
+				  input:-ms-input-placeholder {
+					font-family: "SimHei", "Microsoft YaHei", sans-serif;
+					font-weight: normal;
+					color: #555555;
+					letter-spacing: normal;
+					text-shadow: none;
+				  }			  
+  </style>
+				<style>
+				.logo-title h1 {
+					font-size: 36px;
+					font-weight: 900;
+					color: gold;
+				  
+					/* 立体浮雕效果 */
+					text-shadow:
+					  1px 1px 0 rgba(0,0,0,0.7),
+					  2px 2px 2px rgba(0,0,0,0.5),
+					  -1px -1px 0 rgba(255,255,255,0.8),
+					  -2px -2px 2px rgba(255,255,255,0.6);
+				  
+					margin: 0;
+					text-align: center; /* 或者 left/right 取决于你页面布局 */
+					word-break: break-word; /* 避免长词撑破容器 */
+					padding: 10px 0;
+				  }
+				  
+				  /* 手机适配 */
+				  @media (max-width: 768px) {
+					.logo-title h1 {
+					  font-size: 22px;        /* 缩小标题字体 */
+					  padding: 8px 0;         /* 减少上下间距 */
+					  text-shadow:
+						1px 1px 1px rgba(0,0,0,0.4); /* 简化阴影以提高可读性 */
+					}
+				  }
+                </style>
 				<title>${FileName}</title>
 				${网站图标}
 				<style>
@@ -1510,27 +1746,31 @@ async function subHtml(request) {
 					
 					.container {
 						position: relative;
-						/* 使用rgba设置半透明背景 */
-						background: rgba(255, 255, 255, 0.7);
-						/* 添加磨砂玻璃效果 */
+						background: -webkit-linear-gradient(90deg, 
+							rgba(0, 123, 255, 0.5), 
+							rgba(123, 0, 255, 0.5), 
+							rgba(255, 0, 150, 0.5));
+						background: linear-gradient(90deg, 
+							rgba(0, 123, 255, 0.5), 
+							rgba(123, 0, 255, 0.5), 
+							rgba(255, 0, 150, 0.5));
+						background-clip: padding-box;
 						backdrop-filter: blur(10px);
-						-webkit-backdrop-filter: blur(10px); /* Safari兼容 */
+						-webkit-backdrop-filter: blur(10px);
 						max-width: 600px;
 						width: 90%;
 						padding: 2rem;
 						border-radius: 20px;
-						/* 调整阴影效果增加通透感 */
 						box-shadow: 0 10px 20px rgba(0,0,0,0.05),
-									inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-						transition: transform 0.3s ease;
+									inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+						transition: transform 0.25s ease;
 					}
-
-					/* 调整hover效果 */
+					
 					.container:hover {
 						transform: translateY(-5px);
 						box-shadow: 0 15px 30px rgba(0,0,0,0.1),
 									inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-					}
+					}					
 					
 					h1 {
 						text-align: center;
@@ -1573,7 +1813,7 @@ async function subHtml(request) {
 					button {
 						width: 100%;
 						padding: 12px;
-						background-color: var(--primary-color);
+						background: linear-gradient(90deg, #ff7e5f, #00f2c3, #feb47b); /* 紫青紫渐变 */
 						color: white;
 						border: none;
 						border-radius: 10px;
@@ -1582,10 +1822,11 @@ async function subHtml(request) {
 						cursor: pointer;
 						transition: all 0.3s ease;
 						margin-bottom: 1.5rem;
+						background-size: 200% auto; /* 为 hover 动画准备 */
 					}
 					
 					button:hover {
-						background-color: var(--hover-color);
+						background-position: right center; /* 渐变移动方向 */
 						transform: translateY(-2px);
 					}
 					
@@ -1796,7 +2037,7 @@ async function subHtml(request) {
 							<h1>${FileName}</h1>
 						</div>
 					<div class="input-group">
-						<label for="link">节点链接</label>
+						<label for="link">节点链接：</label>
 						<input type="text" id="link" placeholder="${decodeURIComponent(atob('JUU4JUFGJUI3JUU4JUJFJTkzJUU1JTg1JUE1JTIwVk1lc3MlMjAlMkYlMjBWTEVTUyUyMCUyRiUyMFRyb2phbiUyMCVFOSU5MyVCRSVFNiU4RSVBNQ=='))}">
 					</div>
 					
@@ -1804,7 +2045,7 @@ async function subHtml(request) {
 					
 					<div class="input-group">
 						<div style="display: flex; align-items: center;">
-							<label for="result">优选订阅</label>
+							<label for="result">优选订阅：</label>
 							<div style="position: relative;">
 								<span class="info-icon" onclick="toggleTooltip(event)">!</span>
 								<div class="info-tooltip" id="infoTooltip">
