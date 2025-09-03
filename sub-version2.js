@@ -509,9 +509,10 @@ function getNextSanZiJing() {
  * 根据请求 URL 返回 IP 列表
  * - 前三行原封不动输出
  * - 剩余部分按 ip:port 去重
- * - 随机抽取 25 个节点，保证 US 至少 5 个
- * - HK 3~8 个（随机，不固定）
- * - 重写备注，格式：国家 ⚡ TG@danfeng_chat
+ * - 随机抽取 30 个节点
+ * - HK 3–8 个（随机）
+ * - US ≥5，JP ≥2，SG ≥2，TW ≥2（先随机，不够再补）
+ * - 重写备注，格式：国家⚡TG@danfeng_chat
  * - 国家顺序排序 CN→HK→JP→KR→SG→TW→US→其他
  * - ?numbers=all → 返回原数据，不做处理
  * @param {Request} request - Cloudflare Worker Request 对象
@@ -541,10 +542,10 @@ function getProcessedAddresses(request, allAddresses) {
 	});
 	const unique = Array.from(uniqueMap, ([ipPort, remark]) => `${ipPort}#${remark}`);
   
-	// 随机抽取 25 个，US ≥ 5，HK 3–8
-	const random25 = getRandomWithConstraints(unique, 25, 5, 3, 8);
+	// 随机抽取 30 个（包含约束）
+	const random30 = getRandomWithConstraints(unique, 30, 5, 2, 2, 2, 3, 8);
   
-	// 国家映射表
+	// 保留原映射表，不动
 	const mapping = [
 	  { keywords: ['HK', '香港'], value: 'HK' },
 	  { keywords: ['US', '美国', '美'], value: 'US' },
@@ -588,7 +589,7 @@ function getProcessedAddresses(request, allAddresses) {
 	};
   
 	// 重写备注
-	const rewritten = random25.map(item => {
+	const rewritten = random30.map(item => {
 	  const [ipPort, remark = ''] = item.split('#');
 	  return `${ipPort}#${rewriteRemark(remark)}`;
 	});
@@ -609,27 +610,66 @@ function getProcessedAddresses(request, allAddresses) {
 	return header.concat(rewritten);
   }
   
-  // 随机抽取函数，保证 US ≥ minUS，HK 介于 minHK 和 maxHK 之间
-  function getRandomWithConstraints(array, totalCount = 25, minUS = 5, minHK = 3, maxHK = 8) {
+  /**
+   * 随机抽取函数
+   * - US ≥ minUS，JP ≥ minJP，SG ≥ minSG，TW ≥ minTW
+   * - HK 在 [minHK, maxHK] 之间
+   */
+  function getRandomWithConstraints(array, totalCount, minUS, minJP, minSG, minTW, minHK, maxHK) {
 	const usNodes = array.filter(item => /#.*US/i.test(item));
 	const hkNodes = array.filter(item => /#.*HK/i.test(item));
-	const otherNodes = array.filter(item => !/#.*US/i.test(item) && !/#.*HK/i.test(item));
+	const jpNodes = array.filter(item => /#.*JP/i.test(item));
+	const sgNodes = array.filter(item => /#.*SG/i.test(item));
+	const twNodes = array.filter(item => /#.*TW/i.test(item));
+	const otherNodes = array.filter(item =>
+	  !/#.*US/i.test(item) &&
+	  !/#.*HK/i.test(item) &&
+	  !/#.*JP/i.test(item) &&
+	  !/#.*SG/i.test(item) &&
+	  !/#.*TW/i.test(item)
+	);
   
-	// US 至少 minUS
-	const usCount = Math.min(usNodes.length, minUS);
-	const selectedUS = getRandomSubset(usNodes, usCount);
-  
-	// HK 在 minHK ~ maxHK 之间（且不超过总数）
+	// HK 3~8 个（随机）
 	let hkMin = Math.min(hkNodes.length, minHK);
 	let hkMax = Math.min(hkNodes.length, maxHK);
-	let hkCount = hkMin + Math.floor(Math.random() * (hkMax - hkMin + 1));
+	let hkCount = hkMin > 0 ? hkMin + Math.floor(Math.random() * (hkMax - hkMin + 1)) : 0;
 	const selectedHK = getRandomSubset(hkNodes, hkCount);
   
-	// 剩余补足
-	const remainingCount = totalCount - selectedUS.length - selectedHK.length;
-	const selectedOther = getRandomSubset(otherNodes, remainingCount);
+	// 随机抽剩余节点
+	const remainingPool = shuffleArray([...usNodes, ...jpNodes, ...sgNodes, ...twNodes, ...otherNodes]);
+	const remainingCount = totalCount - selectedHK.length;
+	let selected = [...selectedHK, ...remainingPool.slice(0, remainingCount)];
   
-	return shuffleArray([...selectedUS, ...selectedHK, ...selectedOther]);
+	// 兜底逻辑：US/JP/SG/TW 不低于要求
+	selected = ensureMin(selected, usNodes, 'US', minUS);
+	selected = ensureMin(selected, jpNodes, 'JP', minJP);
+	selected = ensureMin(selected, sgNodes, 'SG', minSG);
+	selected = ensureMin(selected, twNodes, 'TW', minTW);
+  
+	// 超出总数，从“其他”里随机移除多余的
+	if (selected.length > totalCount) {
+	  const overflow = selected.length - totalCount;
+	  const removable = selected.filter(x =>
+		!/#.*US/i.test(x) &&
+		!/#.*JP/i.test(x) &&
+		!/#.*SG/i.test(x) &&
+		!/#.*TW/i.test(x) &&
+		!/#.*HK/i.test(x)
+	  );
+	  const toRemove = getRandomSubset(removable, overflow);
+	  selected = selected.filter(x => !toRemove.includes(x));
+	}
+  
+	return shuffleArray(selected);
+  }
+  
+  // 保证某国至少 minCount
+  function ensureMin(selected, pool, tag, minCount) {
+	const currentCount = selected.filter(x => new RegExp(`#.*${tag}`, 'i').test(x)).length;
+	if (currentCount >= minCount) return selected;
+	const need = minCount - currentCount;
+	const extra = getRandomSubset(pool.filter(x => !selected.includes(x)), need);
+	return [...selected, ...extra];
   }
   
   // 基础随机抽取
@@ -650,7 +690,7 @@ function getProcessedAddresses(request, allAddresses) {
 	  [arr[i], arr[j]] = [arr[j], arr[i]];
 	}
 	return arr;
-  }		
+  }			
 
 function isValidIPv4(address) {
 	const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
@@ -1179,8 +1219,8 @@ export default {
 						const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + EndPS}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${host}","path":"${path}","tls":"","sni":"","alpn":"${encodeURIComponent(alpn)}","fp":""}`)}`;
 						return vmessLink;
 					} else {
-						const 维列斯Link = `${atob('dmxlc3M6Ly8=') + uuid}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT0=') + type}&host=${host}&path=${encodeURIComponent(path)}#${encodeURIComponent(addressid + EndPS)}`;
-						return 维列斯Link;
+						const 大善人Link = `${atob('dmxlc3M6Ly8=') + uuid}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT0=') + type}&host=${host}&path=${encodeURIComponent(path)}#${encodeURIComponent(addressid + EndPS)}`;
+						return 大善人Link;
 					}
 
 				}).join('\n');
@@ -1282,11 +1322,11 @@ export default {
 					const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + 节点备注}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${伪装域名}","path":"${最终路径}","tls":"tls","sni":"${sni}","alpn":"${encodeURIComponent(alpn)}","fp":"","allowInsecure":"1","fragment":"1,40-60,30-50,tlshello"}`)}`;
 					return vmessLink;
 				} else if (协议类型 == atob('VHJvamFu')) {
-					const 特洛伊Link = `${atob('dHJvamFuOi8v') + uuid}@${address}:${port + atob('P3NlY3VyaXR5PXRscyZzbmk9') + sni}&alpn=${encodeURIComponent(alpn)}&fp=randomized&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=1,40-60,30-50,tlshello#${encodeURIComponent(addressid + 节点备注)}`;
+					const 特洛伊Link = `${atob('dHJvamFuOi8v') + uuid}@${address}:${port + atob('P3NlY3VyaXR5PXRscyZzbmk9') + sni}&alpn=${encodeURIComponent(alpn)}&fp=randomized&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
 					return 特洛伊Link;
 				} else {
-					const 维列斯Link = `${atob('dmxlc3M6Ly8=') + uuid}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp}&allowInsecure=1&fragment=1,40-60,30-50,tlshello#${encodeURIComponent(addressid + 节点备注)}`;
-					return 维列斯Link;
+					const 大善人Link = `${atob('dmxlc3M6Ly8=') + uuid}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
+					return 大善人Link;
 				}
 
 			}).join('\n');
@@ -1463,8 +1503,8 @@ export default {
 						const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + EndPS}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${host}","path":"${path}","tls":"","sni":"","alpn":"${encodeURIComponent(alpn)}","fp":""}`)}`;
 						return vmessLink;
 					} else {
-						const 维列斯Link = `${atob('dmxlc3M6Ly8=') + uuid}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT0=') + type}&host=${host}&path=${encodeURIComponent(path)}#${encodeURIComponent(addressid + EndPS)}`;
-						return 维列斯Link;
+						const 大善人Link = `${atob('dmxlc3M6Ly8=') + uuid}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT0=') + type}&host=${host}&path=${encodeURIComponent(path)}#${encodeURIComponent(addressid + EndPS)}`;
+						return 大善人Link;
 					}
 
 				}).join('\n');
@@ -1562,11 +1602,11 @@ export default {
 					const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + 节点备注}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${伪装域名}","path":"${最终路径}","tls":"tls","sni":"${sni}","alpn":"${encodeURIComponent(alpn)}","fp":"","allowInsecure":"1","fragment":"1,40-60,30-50,tlshello"}`)}`;
 					return vmessLink;
 				} else if (协议类型 == atob('VHJvamFu')) {
-					const 特洛伊Link = `${atob('dHJvamFuOi8v') + uuid}@${address}:${port + atob('P3NlY3VyaXR5PXRscyZzbmk9') + sni}&alpn=${encodeURIComponent(alpn)}&fp=randomized&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=1,40-60,30-50,tlshello#${encodeURIComponent(addressid + 节点备注)}`;
+					const 特洛伊Link = `${atob('dHJvamFuOi8v') + uuid}@${address}:${port + atob('P3NlY3VyaXR5PXRscyZzbmk9') + sni}&alpn=${encodeURIComponent(alpn)}&fp=randomized&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
 					return 特洛伊Link;
 				} else {
-					const 维列斯Link = `${atob('dmxlc3M6Ly8=') + uuid}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp}&allowInsecure=1&fragment=1,40-60,30-50,tlshello#${encodeURIComponent(addressid + 节点备注)}`;
-					return 维列斯Link;
+					const 大善人Link = `${atob('dmxlc3M6Ly8=') + uuid}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
+					return 大善人Link;
 				}
 
 			}).join('\n');
