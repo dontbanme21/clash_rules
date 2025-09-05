@@ -10,7 +10,7 @@ let addressescsv = [];
 let DLS = 7;
 let remarkIndex = 1;//CSV备注所在列偏移量
 
-let subConverter = 'SUBAPI.cmliussss.net';
+let subConverter = 'subapi.fgfw.eu.org';
 let subConfig = atob('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NtbGl1L0FDTDRTU1IvbWFpbi9DbGFzaC9jb25maWcvQUNMNFNTUl9PbmxpbmVfRnVsbF9NdWx0aU1vZGUuaW5p');
 let subProtocol = 'https';
 let noTLS = 'false';
@@ -42,7 +42,7 @@ let MamaJustKilledAMan = ['fuckua','wget','axios','go-resty','cf-workers-sub','m
 let myforbiddenhost = ['cfxr.eu.org','o0w0o.qzz.io','3333r567.11890604.xyz','ekt.me','www.bing.com','lzj.pp.ua','lzjnb.shop'];
 let proxyIPPool = [];
 let socks5Data;
-let alpn = 'http/1.1';
+let alpn = 'h3';
 let 网络备案 = `<a href="https://t.me/danfeng_chat" target="_blank" rel="noopener" class="tg-link">
 Telegram交流群
 </a>
