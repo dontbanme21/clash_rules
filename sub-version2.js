@@ -1229,8 +1229,8 @@ export default {
 			//随机IP
 			//随机端口
 			//三字经备注
-			const random20Addresses = getProcessedAddresses(request,uniqueAddresses);
-			const responseBody = uniqueAddresses.map(address => {
+			const random30Addresses = getProcessedAddresses(request,uniqueAddresses);
+			const responseBody = random30Addresses.map(address => {
 				let port = "-1";
 				let addressid = address;
 
@@ -1509,8 +1509,8 @@ export default {
 
 				}).join('\n');
 			}
-			const random20Addresses = getProcessedAddresses(request,uniqueAddresses);
-			const responseBody = random20Addresses.map(address => {
+			const random30Addresses = getProcessedAddresses(request,uniqueAddresses);
+			const responseBody = random30Addresses.map(address => {
 				let port = "-1";
 				let addressid = address;
 
