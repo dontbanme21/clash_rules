@@ -11,14 +11,14 @@ let DLS = 7;
 let remarkIndex = 1;//CSV备注所在列偏移量
 
 let subConverter = 'subapi.fgfw.eu.org';
-let subConfig = atob('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NtbGl1L0FDTDRTU1IvbWFpbi9DbGFzaC9jb25maWcvQUNMNFNTUl9PbmxpbmVfRnVsbF9NdWx0aU1vZGUuaW5p');
+let subConfig = 'https://raw.githubusercontent.com/cmliu/ACM4SSR/main/Clash/config/ACM4SSR_Online_Full_MultiMode.ini';
 let subProtocol = 'https';
 let noTLS = 'false';
 let link;
-let 隧道版本作者 = atob('ZWQ=');
+let 隧道版本作者 = 'ed';
 let 获取代理IP = 'true';
 let proxyIPs = [
-	atob('cHJveHlpcC5meHhrLmRlZHluLmlv'),
+	'proxyip.fxxk.dedyn.io',
 ];
 let 匹配PROXYIP = [];
 let socks5DataURL = '';
@@ -27,7 +27,7 @@ let ChatID = '';
 let 临时中转域名 = [];
 let 临时中转域名接口 = '';
 let EndPS = '';
-let 协议类型 = atob(`\u0056\u006b\u0078\u0046\u0055\u0031\u004d\u003d`);
+let 协议类型 = 'VLESS';
 let FileName = 'SUB-BestCFip';
 let SUBUpdateTime = 1;
 let total = 24;
@@ -86,7 +86,7 @@ async function 整理优选列表(api) {
 			method: 'get',
 			headers: {
 				'Accept': 'text/html,application/xhtml+xml,application/xml;',
-				'User-Agent': FileName + atob('IChodHRwczovL2dpdGh1Yi5jb20vY21saXUvV29ya2VyVmxlc3Myc3ViKQ==')
+				'User-Agent': FileName + '[](https://github.com/cmliu/WorkerVless2sub)'
 			},
 			signal: controller.signal // 将AbortController的信号量添加到fetch请求中，以便于需要时可以取消请求
 		}).then(response => response.ok ? response.text() : Promise.reject())));
@@ -395,7 +395,7 @@ function surge(content, url, path) {
 
 	let 输出内容 = "";
 	for (let x of 每行内容) {
-		if (x.includes(atob(atob('UFNCMGNtOXFZVzRz')))) {
+		if (x.includes('trojan')) {
 			const host = x.split("sni=")[1].split(",")[0];
 			const 备改内容 = `skip-cert-verify=true, tfo=false, udp-relay=false`;
 			const 正确内容 = `skip-cert-verify=true, ws=true, ws-path=${path}, ws-headers=Host:"${host}", tfo=false, udp-relay=false`;
@@ -761,7 +761,7 @@ async function getLink(重新汇总所有链接) {
 				method: 'get',
 				headers: {
 					'Accept': 'text/html,application/xhtml+xml,application/xml;',
-					'User-Agent': 'v2rayN/' + FileName + ' (https://github.com/cmliu/WorkerVless2sub)'
+					'User-Agent': 'v2rayN/' + FileName + '[](https://github.com/cmliu/WorkerVless2sub)'
 				},
 				signal: controller.signal // 将AbortController的信号量添加到fetch请求中
 			}).then(response => response.ok ? response.text() : Promise.reject())));
@@ -1188,7 +1188,7 @@ async function subHtml(request) {
 				<script src="https://cdn.jsdelivr.net/npm/@keeex/qrcodejs-kx@1.0.2/qrcode.min.js"></script>
 			</head>
 			<body>
-				<a href="${atob('aHR0cHM6Ly9naXRodWIuY29tL2NtbGl1L1dvcmtlclZsZXNzMnN1Yg==')}" target="_blank" class="github-corner" aria-label="View source on Github">
+				<a href="https://github.com/cmliu/WorkerVless2sub" target="_blank" class="github-corner" aria-label="View source on Github">
 					<svg viewBox="0 0 250 250" aria-hidden="true">
 						<path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
 						<path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
@@ -1202,7 +1202,7 @@ async function subHtml(request) {
 						</div>
 					<div class="input-group">
 						<label for="link">节点链接：</label>
-						<input type="text" id="link" placeholder="${decodeURIComponent(atob('JUU4JUFGJUI3JUU4JUJFJTkzJUU1JTg1JUE1JTIwVk1lc3MlMjAlMkYlMjBWTEVTUyUyMCUyRiUyMFRyb2phbiUyMCVFOSU5MyVCRSVFNiU4RSVBNQ=='))}">
+						<input type="text" id="link" placeholder="请输入 VMess / VLESS / Trojan 链接">
 					</div>
 					
 					<button onclick="generateLink()">生成优选订阅</button>
@@ -1449,10 +1449,10 @@ export default {
 			}
 
 			if (env.PASSWORD) {
-				协议类型 = atob('VHJvamFu');
+				协议类型 = 'Trojan';
 				uuid = env.PASSWORD
 			} else {
-				协议类型 = atob(`\u0056\u006b\u0078\u0046\u0055\u0031\u004d\u003d`);
+				协议类型 = 'VLESS';
 				if (env.KEY) {
 					有效时间 = Number(env.TIME) || 有效时间;
 					更新时间 = Number(env.UPTIME) || 更新时间;
@@ -1488,17 +1488,17 @@ export default {
 			const extra = url.searchParams.get('extra') || null;
 			xhttp = (mode ? `&mode=${mode}` : "") + (extra ? `&extra=${encodeURIComponent(extra)}` : "");
 			alpn = url.searchParams.get('alpn') || (xhttp ? "h3%2Ch2" : alpn);
-			隧道版本作者 = url.searchParams.get(atob('ZWRnZXR1bm5lbA==')) || url.searchParams.get(atob('ZXBlaXVz')) || 隧道版本作者;
+			隧道版本作者 = url.searchParams.get('edgetunnel') || url.searchParams.get('epeius') || 隧道版本作者;
 			获取代理IP = url.searchParams.get('proxyip') || 'false';
 
 			if (url.searchParams.has('alterid')) {
 				协议类型 = 'VMess';
 				额外ID = url.searchParams.get('alterid') || 额外ID;
 				加密方式 = url.searchParams.get('security') || 加密方式;
-			} else if (url.searchParams.has(atob('ZWRnZXR1bm5lbA==')) || url.searchParams.has('uuid')) {
-				协议类型 = atob('VkxFU1M=');
-			} else if (url.searchParams.has(atob('ZXBlaXVz')) || url.searchParams.has('password') || url.searchParams.has('pw')) {
-				协议类型 = atob('VHJvamFu');
+			} else if (url.searchParams.has('edgetunnel') || url.searchParams.has('uuid')) {
+				协议类型 = 'VLESS';
+			} else if (url.searchParams.has('epeius') || url.searchParams.has('password') || url.searchParams.has('pw')) {
+				协议类型 = 'Trojan';
 			}
 
 			if (!url.pathname.includes("/sub")) {
@@ -1532,7 +1532,7 @@ export default {
 			
 			
 				
-				${atob(atob('YUhSMGNITTZMeTluYVhSb2RXSXVZMjl0TDJOdGJHbDFMM2R2Y210bGNsWnNaWE56TW5OMVlnPT0='))}
+				https://github.com/cmliu/workerVless2sub
 				`;
 
 				return new Response(responseText, {
@@ -1558,17 +1558,17 @@ export default {
 			const extra = url.searchParams.get('extra') || null;
 			xhttp = (mode ? `&mode=${mode}` : "") + (extra ? `&extra=${encodeURIComponent(extra)}` : "");
 			alpn = url.searchParams.get('alpn') || (xhttp ? "h3%2Ch2" : alpn);
-			隧道版本作者 = url.searchParams.get(atob('ZWRnZXR1bm5lbA==')) || url.searchParams.get(atob('ZXBlaXVz')) || 隧道版本作者;
+			隧道版本作者 = url.searchParams.get('edgetunnel') || url.searchParams.get('epeius') || 隧道版本作者;
 			获取代理IP = url.searchParams.get('proxyip') || 'false';
 
 			if (url.searchParams.has('alterid')) {
 				协议类型 = 'VMess';
 				额外ID = url.searchParams.get('alterid') || 额外ID;
 				加密方式 = url.searchParams.get('security') || 加密方式;
-			} else if (url.searchParams.has(atob('ZWRnZXR1bm5lbA==')) || url.searchParams.has('uuid')) {
-				协议类型 = atob('VkxFU1M=');
-			} else if (url.searchParams.has(atob('ZXBlaXVz')) || url.searchParams.has('password') || url.searchParams.has('pw')) {
-				协议类型 = atob('VHJvamFu');
+			} else if (url.searchParams.has('edgetunnel') || url.searchParams.has('uuid')) {
+				协议类型 = 'VLESS';
+			} else if (url.searchParams.has('epeius') || url.searchParams.has('password') || url.searchParams.has('pw')) {
+				协议类型 = 'Trojan';
 			}
 
 			if (!url.pathname.includes("/sub")) {
@@ -1602,7 +1602,7 @@ export default {
 			
 			
 				
-				${atob(atob('YUhSMGNITTZMeTluYVhSb2RXSXVZMjl0TDJOdGJHbDFMM2R2Y210bGNsWnNaWE56TW5OMVlnPT0='))}
+				https://github.com/cmliu/workerVless2sub
 				`;
 
 				return new Response(responseText, {
@@ -1665,7 +1665,7 @@ export default {
 			const uniqueAddresses = Array.from(new Set(addresses.concat(newAddressesapi, newAddressescsv).filter(item => item && item.trim())));
 
 			let notlsresponseBody;
-			if ((noTLS == 'true' && 协议类型 == atob(`\u0056\u006b\u0078\u0046\u0055\u0031\u004d\u003d`)) || 协议类型 == 'VMess') {
+			if ((noTLS == 'true' && 协议类型 == 'VLESS') || 协议类型 == 'VMess') {
 				const newAddressesnotlsapi = await 整理优选列表(addressesnotlsapi);
 				const newAddressesnotlscsv = await 整理测速结果('FALSE');
 				const uniqueAddressesnotls = Array.from(new Set(addressesnotls.concat(newAddressesnotlsapi, newAddressesnotlscsv).filter(item => item && item.trim())));
@@ -1713,7 +1713,7 @@ export default {
 					if (port == "-1") port = "80";
 					//console.log(address, port, addressid);
 
-					if (隧道版本作者.trim() === atob('Y21saXU=') && 获取代理IP.trim() === 'true') {
+					if (隧道版本作者.trim() === 'cmliu' && 获取代理IP.trim() === 'true') {
 						// 将addressid转换为小写
 						let lowerAddressid = addressid.toLowerCase();
 						// 初始化找到的proxyIP为null
@@ -1736,11 +1736,11 @@ export default {
 
 							if (foundProxyIP) {
 								// 如果找到匹配的proxyIP，赋值给path
-								path = atob('L3Byb3h5aXA9') + foundProxyIP;
+								path = '/proxyip=' + foundProxyIP;
 							} else {
 								// 如果没有找到匹配项，随机选择一个proxyIP
 								const randomProxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
-								path = atob('L3Byb3h5aXA9') + randomProxyIP;
+								path = '/proxyip=' + randomProxyIP;
 							}
 						}
 					}
@@ -1749,8 +1749,8 @@ export default {
 						const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + EndPS}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${host}","path":"${path}","tls":"","sni":"","alpn":"${encodeURIComponent(alpn)}","fp":""}`)}`;
 						return vmessLink;
 					} else {
-						const 大善人Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=&type=${type}&host=${host}&path=${encodeURIComponent(path)}&encryption=none#${encodeURIComponent(addressid + EndPS)}`;
-						return 大善人Link;
+						const vlessLink = `vless://${uuid}@${address}:${port}?security=&type=${type}&host=${host}&path=${encodeURIComponent(path)}&encryption=none#${encodeURIComponent(addressid + EndPS)}`;
+						return vlessLink;
 					}
 
 				}).join('\n');
@@ -1803,7 +1803,7 @@ export default {
 
 				//console.log(address, port, addressid);
 
-				if (隧道版本作者.trim() === atob('Y21saXU=') && 获取代理IP.trim() === 'true') {
+				if (隧道版本作者.trim() === 'cmliu' && 获取代理IP.trim() === 'true') {
 					// 将addressid转换为小写
 					let lowerAddressid = addressid.toLowerCase();
 					// 初始化找到的proxyIP为null
@@ -1826,14 +1826,14 @@ export default {
 
 						const matchingProxyIP = proxyIPPool.find(proxyIP => proxyIP.includes(address));
 						if (matchingProxyIP) {
-							path = atob('L3Byb3h5aXA9') + matchingProxyIP;
+							path = '/proxyip=' + matchingProxyIP;
 						} else if (foundProxyIP) {
 							// 如果找到匹配的proxyIP，赋值给path
-							path = atob('L3Byb3h5aXA9') + foundProxyIP;
+							path = '/proxyip=' + foundProxyIP;
 						} else {
 							// 如果没有找到匹配项，随机选择一个proxyIP
 							const randomProxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
-							path = atob('L3Byb3h5aXA9') + randomProxyIP;
+							path = '/proxyip=' + randomProxyIP;
 						}
 					}
 				}
@@ -1844,19 +1844,19 @@ export default {
 				if (临时中转域名.length > 0 && (host.includes('.workers.dev'))) {
 					最终路径 = `/${host}${path}`;
 					伪装域名 = 临时中转域名[Math.floor(Math.random() * 临时中转域名.length)];
-					节点备注 = EndPS + atob('IOW3suWQr+eUqOS4tOaXtuWfn+WQjeS4rei9rOacjeWKoe+8jOivt+WwveW/q+e7keWumuiHquWumuS5ieWfn++8gQ==');
+					节点备注 = EndPS + '【中转域名】';
 					sni = 伪装域名;
 				}
 
 				if (协议类型 == 'VMess') {
 					const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + 节点备注}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${伪装域名}","path":"${最终路径}","tls":"tls","sni":"${sni}","alpn":"${encodeURIComponent(alpn)}","fp":"","allowInsecure":"1","fragment":"1,40-60,30-50,tlshello"}`)}`;
 					return vmessLink;
-				} else if (协议类型 == atob('VHJvamFu')) {
-					const 特洛伊Link = `${atob(atob('ZEhKdmFtRnVPaTh2')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=randomized&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
-					return 特洛伊Link;
+				} else if (协议类型 == 'Trojan') {
+					const trojanLink = `trojan://${uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=randomized&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
+					return trojanLink;
 				} else {
-					const 大善人Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
-					return 大善人Link;
+					const vlessLink = `vless://${uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
+					return vlessLink;
 				}
 
 			}).join('\n');
@@ -1875,10 +1875,10 @@ export default {
 				console.log("notlsresponseBody: " + notlsresponseBody);
 			}
 
-			if (协议类型 == atob('VHJvamFu') && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
-				const 特洛伊Links = combinedContent.split('\n');
-				const 特洛伊LinksJ8 = generateFakeInfo(特洛伊Links.join('|'), uuid, host);
-				subConverterUrl = `${subProtocol}://${subConverter}/sub?target=surge&ver=4&url=${encodeURIComponent(特洛伊LinksJ8)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=true&list=false&xudp=false&udp=false&tfo=false&expand=true&scv=true&fdn=false`;
+			if (协议类型 == 'Trojan' && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
+				const trojanLinks = combinedContent.split('\n');
+				const trojanLinksJ8 = generateFakeInfo(trojanLinks.join('|'), uuid, host);
+				subConverterUrl = `${subProtocol}://${subConverter}/sub?target=surge&ver=4&url=${encodeURIComponent(trojanLinksJ8)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=true&list=false&xudp=false&udp=false&tfo=false&expand=true&scv=true&fdn=false`;
 			} else {
 				let base64Response;
 				try {
@@ -1949,7 +1949,7 @@ export default {
 			const uniqueAddresses = Array.from(new Set(addresses.concat(newAddressesapi, newAddressescsv).filter(item => item && item.trim())));
 
 			let notlsresponseBody;
-			if ((noTLS == 'true' && 协议类型 == atob(`\u0056\u006b\u0078\u0046\u0055\u0031\u004d\u003d`)) || 协议类型 == 'VMess') {
+			if ((noTLS == 'true' && 协议类型 == 'VLESS') || 协议类型 == 'VMess') {
 				const newAddressesnotlsapi = await 整理优选列表(addressesnotlsapi);
 				const newAddressesnotlscsv = await 整理测速结果('FALSE');
 				const uniqueAddressesnotls = Array.from(new Set(addressesnotls.concat(newAddressesnotlsapi, newAddressesnotlscsv).filter(item => item && item.trim())));
@@ -1997,7 +1997,7 @@ export default {
 					if (port == "-1") port = "80";
 					//console.log(address, port, addressid);
 
-					if (隧道版本作者.trim() === atob('Y21saXU=') && 获取代理IP.trim() === 'true') {
+					if (隧道版本作者.trim() === 'cmliu' && 获取代理IP.trim() === 'true') {
 						// 将addressid转换为小写
 						let lowerAddressid = addressid.toLowerCase();
 						// 初始化找到的proxyIP为null
@@ -2020,11 +2020,11 @@ export default {
 
 							if (foundProxyIP) {
 								// 如果找到匹配的proxyIP，赋值给path
-								path = atob('L3Byb3h5aXA9') + foundProxyIP;
+								path = '/proxyip=' + foundProxyIP;
 							} else {
 								// 如果没有找到匹配项，随机选择一个proxyIP
 								const randomProxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
-								path = atob('L3Byb3h5aXA9') + randomProxyIP;
+								path = '/proxyip=' + randomProxyIP;
 							}
 						}
 					}
@@ -2033,8 +2033,8 @@ export default {
 						const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + EndPS}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${host}","path":"${path}","tls":"","sni":"","alpn":"${encodeURIComponent(alpn)}","fp":""}`)}`;
 						return vmessLink;
 					} else {
-						const 大善人Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=&type=${type}&host=${host}&path=${encodeURIComponent(path)}&encryption=none#${encodeURIComponent(addressid + EndPS)}`;
-						return 大善人Link;
+						const vlessLink = `vless://${uuid}@${address}:${port}?security=&type=${type}&host=${host}&path=${encodeURIComponent(path)}&encryption=none#${encodeURIComponent(addressid + EndPS)}`;
+						return vlessLink;
 					}
 
 				}).join('\n');
@@ -2083,7 +2083,7 @@ export default {
 
 				//console.log(address, port, addressid);
 
-				if (隧道版本作者.trim() === atob('Y21saXU=') && 获取代理IP.trim() === 'true') {
+				if (隧道版本作者.trim() === 'cmliu' && 获取代理IP.trim() === 'true') {
 					// 将addressid转换为小写
 					let lowerAddressid = addressid.toLowerCase();
 					// 初始化找到的proxyIP为null
@@ -2106,14 +2106,14 @@ export default {
 
 						const matchingProxyIP = proxyIPPool.find(proxyIP => proxyIP.includes(address));
 						if (matchingProxyIP) {
-							path = atob('L3Byb3h5aXA9') + matchingProxyIP;
+							path = '/proxyip=' + matchingProxyIP;
 						} else if (foundProxyIP) {
 							// 如果找到匹配的proxyIP，赋值给path
-							path = atob('L3Byb3h5aXA9') + foundProxyIP;
+							path = '/proxyip=' + foundProxyIP;
 						} else {
 							// 如果没有找到匹配项，随机选择一个proxyIP
 							const randomProxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
-							path = atob('L3Byb3h5aXA9') + randomProxyIP;
+							path = '/proxyip=' + randomProxyIP;
 						}
 					}
 				}
@@ -2124,19 +2124,19 @@ export default {
 				if (临时中转域名.length > 0 && (host.includes('.workers.dev'))) {
 					最终路径 = `/${host}${path}`;
 					伪装域名 = 临时中转域名[Math.floor(Math.random() * 临时中转域名.length)];
-					节点备注 = EndPS + atob('IOW3suWQr+eUqOS4tOaXtuWfn+WQjeS4rei9rOacjeWKoe+8jOivt+WwveW/q+e7keWumuiHquWumuS5ieWfn++8gQ==');
+					节点备注 = EndPS + '【中转域名】';
 					sni = 伪装域名;
 				}
 
 				if (协议类型 == 'VMess') {
 					const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + 节点备注}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${伪装域名}","path":"${最终路径}","tls":"tls","sni":"${sni}","alpn":"${encodeURIComponent(alpn)}","fp":"","allowInsecure":"1","fragment":"1,40-60,30-50,tlshello"}`)}`;
 					return vmessLink;
-				} else if (协议类型 == atob('VHJvamFu')) {
-					const 特洛伊Link = `${atob(atob('ZEhKdmFtRnVPaTh2')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=randomized&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
-					return 特洛伊Link;
+				} else if (协议类型 == 'Trojan') {
+					const trojanLink = `trojan://${uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=randomized&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
+					return trojanLink;
 				} else {
-					const 大善人Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
-					return 大善人Link;
+					const vlessLink = `vless://${uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp}&allowInsecure=1&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
+					return vlessLink;
 				}
 
 			}).join('\n');
@@ -2155,10 +2155,10 @@ export default {
 				console.log("notlsresponseBody: " + notlsresponseBody);
 			}
 
-			if (协议类型 == atob('VHJvamFu') && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
-				const 特洛伊Links = combinedContent.split('\n');
-				const 特洛伊LinksJ8 = generateFakeInfo(特洛伊Links.join('|'), uuid, host);
-				subConverterUrl = `${subProtocol}://${subConverter}/sub?target=surge&ver=4&url=${encodeURIComponent(特洛伊LinksJ8)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=true&list=false&xudp=false&udp=false&tfo=false&expand=true&scv=true&fdn=false`;
+			if (协议类型 == 'Trojan' && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
+				const trojanLinks = combinedContent.split('\n');
+				const trojanLinksJ8 = generateFakeInfo(trojanLinks.join('|'), uuid, host);
+				subConverterUrl = `${subProtocol}://${subConverter}/sub?target=surge&ver=4&url=${encodeURIComponent(trojanLinksJ8)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=true&list=false&xudp=false&udp=false&tfo=false&expand=true&scv=true&fdn=false`;
 			} else {
 				let base64Response;
 				try {
@@ -2199,8 +2199,8 @@ export default {
 
 			let subConverterContent = await subConverterResponse.text();
 
-			if (协议类型 == atob('VHJvamFu') && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
-				subConverterContent = surge(subConverterContent, host, path);
+			if (协议类型 == 'Trojan' && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
+				subConverterContent = surge(subConverterContent, url, path);
 			}
 			subConverterContent = revertFakeInfo(subConverterContent, uuid, host);
 			if (!userAgent.includes('mozilla')) responseHeaders["Content-Disposition"] = `attachment; filename*=utf-8''${encodeURIComponent(FileName)}`;
