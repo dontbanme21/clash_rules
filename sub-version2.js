@@ -11,7 +11,7 @@ let DLS = 7;
 let remarkIndex = 1;//CSV备注所在列偏移量
 
 let subConverter = 'subapi.fgfw.eu.org';
-let subConfig = 'https://raw.githubusercontent.com/cmliu/ACM4SSR/main/Clash/config/ACM4SSR_Online_Full_MultiMode.ini';
+let subConfig = 'https://raw.githubusercontent.com/dontbanme21/clash_rules/refs/heads/main/rules.ini';
 let subProtocol = 'https';
 let noTLS = 'false';
 let link;
