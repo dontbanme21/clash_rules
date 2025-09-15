@@ -2192,7 +2192,7 @@ export default {
 		}
 
 		try {
-			const subConverterResponse = await fetch(subConverterUrl, { headers: { 'User-Agent': `v2rayN/${FileName + '(https://github.com/cmliu/WorkerVless2sub)'}` } });
+			const subConverterResponse = await fetch(subConverterUrl);
 
 			if (!subConverterResponse.ok) {
 				throw new Error(`Error fetching subConverterUrl: ${subConverterResponse.status} ${subConverterResponse.statusText}`);
