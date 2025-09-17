@@ -2200,6 +2200,8 @@ export default {
 			let subConverterContent = await subConverterResponse.text();
 
 			if (协议类型 == 'Trojan') && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
+				subConverterContent = surge(subConverterContent, host, path);
+			}
 			subConverterContent = revertFakeInfo(subConverterContent, uuid, host);
 			if (!userAgent.includes('mozilla')) responseHeaders["Content-Disposition"] = `attachment; filename*=utf-8''${encodeURIComponent(FileName)}`;
 			return new Response(subConverterContent, { headers: responseHeaders });
