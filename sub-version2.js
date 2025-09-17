@@ -2199,7 +2199,7 @@ export default {
 
 			let subConverterContent = await subConverterResponse.text();
 
-			if (协议类型 == 'Trojan') && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
+			if (协议类型 == 'Trojan' && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
 				subConverterContent = surge(subConverterContent, host, path);
 			}
 			subConverterContent = revertFakeInfo(subConverterContent, uuid, host);
