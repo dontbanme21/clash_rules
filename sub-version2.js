@@ -1631,8 +1631,7 @@ export default {
 		if (host.toLowerCase().includes('notls') || host.toLowerCase().includes('worker') || host.toLowerCase().includes('trycloudflare')) noTLS = 'true';
 		noTLS = env.NOTLS || noTLS;
 		let subConverterUrl = generateFakeInfo(url.href, uuid, host);
-		const isSubConverterRequest = request.headers.get('subconverter-request') || request.headers.get('subconverter-version') || userAgent.includes('subconverter');
-		if (isSubConverterRequest) alpn = '';
+		if (userAgent.includes('subconverter')) alpn = '';
 		if ((MamaJustKilledAMan.length > 0 &&MamaJustKilledAMan.some(str => userAgent.includes(str))
 		  ) ||
 		  myforbiddenhost.some(token => request.url.includes(token))) {
@@ -1909,9 +1908,9 @@ export default {
 				const response = new Response(base64Response, { headers: responseHeaders });
 				return response;
 			}
-		} else if ((userAgent.includes('clash') || userAgent.includes('meta') || userAgent.includes('mihomo') || (format === 'clash' && !isSubConverterRequest)) && !userAgent.includes('nekobox') && !userAgent.includes('cf-workers-sub')) {
+		} else if ((userAgent.includes('clash') || userAgent.includes('meta') || userAgent.includes('mihomo') || (format === 'clash' && !userAgent.includes('subconverter'))) && !userAgent.includes('nekobox') && !userAgent.includes('cf-workers-sub')) {
 			subConverterUrl = `${subProtocol}://${subConverter}/sub?target=clash&url=${encodeURIComponent(subConverterUrl)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
-		} else if ((userAgent.includes('sing-box') || userAgent.includes('singbox') || (format === 'singbox' && !isSubConverterRequest)) && !userAgent.includes('cf-workers-sub')) {
+		} else if ((userAgent.includes('sing-box') || userAgent.includes('singbox') || (format === 'singbox' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
 			if (协议类型 == 'VMess' && url.href.includes('path=')) {
 				const 路径参数前部分 = url.href.split('path=')[0];
 				const parts = url.href.split('path=')[1].split('&');
@@ -2156,7 +2155,7 @@ export default {
 				console.log("notlsresponseBody: " + notlsresponseBody);
 			}
 
-			if (协议类型 == 'Trojan' && (userAgent.includes('surge') || (format === 'surge' && !isSubConverterRequest)) && !userAgent.includes('cf-workers-sub')) {
+			if (协议类型 == atob('Trojan') && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
 				const trojanLinks = combinedContent.split('\n');
 				const trojanLinksJ8 = generateFakeInfo(trojanLinks.join('|'), uuid, host);
 				subConverterUrl = `${subProtocol}://${subConverter}/sub?target=surge&ver=4&url=${encodeURIComponent(trojanLinksJ8)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=true&list=false&xudp=false&udp=false&tfo=false&expand=true&scv=true&fdn=false`;
@@ -2192,7 +2191,7 @@ export default {
 		}
 
 		try {
-			const subConverterResponse = await fetch(subConverterUrl);
+			const subConverterResponse = await fetch(subConverterUrl, { headers: { 'User-Agent': userAgentHeader } });
 
 			if (!subConverterResponse.ok) {
 				throw new Error(`Error fetching subConverterUrl: ${subConverterResponse.status} ${subConverterResponse.statusText}`);
@@ -2200,9 +2199,7 @@ export default {
 
 			let subConverterContent = await subConverterResponse.text();
 
-			if (协议类型 == 'Trojan' && (userAgent.includes('surge') || (format === 'surge' && !isSubConverterRequest)) && !userAgent.includes('cf-workers-sub')) {
-				subConverterContent = surge(subConverterContent, url, path);
-			}
+			if (协议类型 == 'Trojan') && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
 			subConverterContent = revertFakeInfo(subConverterContent, uuid, host);
 			if (!userAgent.includes('mozilla')) responseHeaders["Content-Disposition"] = `attachment; filename*=utf-8''${encodeURIComponent(FileName)}`;
 			return new Response(subConverterContent, { headers: responseHeaders });
