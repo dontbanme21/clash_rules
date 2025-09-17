@@ -11,7 +11,7 @@ let DLS = 7;
 let remarkIndex = 1;//CSV备注所在列偏移量
 
 let subConverter = 'subapi.fgfw.eu.org';
-let subConfig = 'https://raw.githubusercontent.com/dontbanme21/clash_rules/refs/heads/main/rules.ini';
+let subConfig = 'https://raw.githubusercontent.com/cmliu/ACM4SSR/main/Clash/config/ACM4SSR_Online_Full_MultiMode.ini';
 let subProtocol = 'https';
 let noTLS = 'false';
 let link;
@@ -86,7 +86,7 @@ async function 整理优选列表(api) {
 			method: 'get',
 			headers: {
 				'Accept': 'text/html,application/xhtml+xml,application/xml;',
-				'User-Agent': FileName + "(https://github.com/cmliu/WorkerVless2sub)"
+				'User-Agent': FileName + '[](https://github.com/cmliu/WorkerVless2sub)'
 			},
 			signal: controller.signal // 将AbortController的信号量添加到fetch请求中，以便于需要时可以取消请求
 		}).then(response => response.ok ? response.text() : Promise.reject())));
@@ -761,7 +761,7 @@ async function getLink(重新汇总所有链接) {
 				method: 'get',
 				headers: {
 					'Accept': 'text/html,application/xhtml+xml,application/xml;',
-					'User-Agent': 'v2rayN/' + FileName + "(https://github.com/cmliu/WorkerVless2sub)"
+					'User-Agent': 'v2rayN/' + FileName + '[](https://github.com/cmliu/WorkerVless2sub)'
 				},
 				signal: controller.signal // 将AbortController的信号量添加到fetch请求中
 			}).then(response => response.ok ? response.text() : Promise.reject())));
@@ -1281,7 +1281,7 @@ async function subHtml(request) {
 						}
 						
 						let uuidType = 'uuid';
-						const isTrojan = link.startsWith("trojan://");
+						const isTrojan = link.startsWith(\`\${atob('dHJvamFuOi8v')}\`);
 						if (isTrojan) uuidType = 'password';
 						let subLink = '';
 						try {
@@ -2155,7 +2155,7 @@ export default {
 				console.log("notlsresponseBody: " + notlsresponseBody);
 			}
 
-			if (协议类型 == atob('Trojan') && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
+			if (协议类型 == 'Trojan' && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
 				const trojanLinks = combinedContent.split('\n');
 				const trojanLinksJ8 = generateFakeInfo(trojanLinks.join('|'), uuid, host);
 				subConverterUrl = `${subProtocol}://${subConverter}/sub?target=surge&ver=4&url=${encodeURIComponent(trojanLinksJ8)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=true&list=false&xudp=false&udp=false&tfo=false&expand=true&scv=true&fdn=false`;
@@ -2191,7 +2191,7 @@ export default {
 		}
 
 		try {
-			const subConverterResponse = await fetch(subConverterUrl, { headers: { 'User-Agent': userAgentHeader } });
+			const subConverterResponse = await fetch(subConverterUrl);
 
 			if (!subConverterResponse.ok) {
 				throw new Error(`Error fetching subConverterUrl: ${subConverterResponse.status} ${subConverterResponse.statusText}`);
@@ -2200,7 +2200,7 @@ export default {
 			let subConverterContent = await subConverterResponse.text();
 
 			if (协议类型 == 'Trojan' && (userAgent.includes('surge') || (format === 'surge' && !userAgent.includes('subconverter'))) && !userAgent.includes('cf-workers-sub')) {
-				subConverterContent = surge(subConverterContent, host, path);
+				subConverterContent = surge(subConverterContent, url, path);
 			}
 			subConverterContent = revertFakeInfo(subConverterContent, uuid, host);
 			if (!userAgent.includes('mozilla')) responseHeaders["Content-Disposition"] = `attachment; filename*=utf-8''${encodeURIComponent(FileName)}`;
