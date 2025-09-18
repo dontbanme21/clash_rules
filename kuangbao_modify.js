@@ -1,206 +1,104 @@
 import { connect } from 'cloudflare:sockets';
-
-const d = new TextDecoder();
-const e = new TextEncoder();
-
-// === 配置区 ===
-const I = '123456';
-const UUID = '5aba5b77-48eb-4ae2-b60d-5bfee7ac169e';
-const P = ['1.1.1.1'];
-// 回落地址，支持 host:port 或 ip:port，比如 '2.2.2.2:50000' 或 'sjc.o00o.ooo:443'
-const R = 'sjc.o00o.ooo:443';
-const REMARK = '狂暴';
-
-// === UUID -> byte array ===
-const U = ((hex, a = new Uint8Array(16)) => {
-  hex = hex.replace(/-/g, '');
-  for (let i = 0; i < 32; i += 2) a[i >> 1] = parseInt(hex.substr(i, 2), 16);
-  return a;
-})(UUID);
-
-// === 简单逐字节比较校验 ===
-const checkUUID = (b) => {
-  for (let i = 0; i < 16; i++) if (b[i] !== U[i]) return 0;
-  return 1;
-};
-
-// === 建立 TCP 连接（失败则使用回落 R） ===
-const tryConnect = async (host, port, initialData) => {
+const d = new TextDecoder(), e = new TextEncoder(), i = 'token', u = 'uuid', p = ['1.1.1.1'], r = 'ip', n = '狂暴';
+const U = ((h, a = new Uint8Array(16)) => { for (let i = 0; i < 32; i += 2) a[i >> 1] = parseInt(h.substr(i, 2), 16); return a })(u.replace(/-/g, ''));
+const c = b => { for (let i = 0; i < 16; i++) if (b[i] !== U[i]) return 0; return 1 };
+const t = async (h, o, a) => {
   try {
-    const s = await connect({ hostname: host, port });
-    // 确保 socket 已打开（s.opened 可能是个 promise / 属性）
-    if (s.opened instanceof Promise) await s.opened;
-    return { tcpSocket: s, initialData };
-  } catch (err) {
-    // 如果配置了回落地址，尝试回落
-    if (R) {
-      const [H, P] = R.split(':');
-      const portFallback = +P || port;
-      return tryConnect(H, portFallback, initialData);
-    }
-    throw new Error('连接失败: ' + err.message);
+    const s = await connect({ hostname: h, port: o });
+    return await s.opened, { tcpSocket: s, initialData: a };
+  } catch {}
+  if (r) {
+    const [H, P] = r.split(':');
+    return t(H, +P || o, a);
   }
+  throw new Error('连接失败');
 };
-
-// === 解析 VLESS 握手包，返回目标 host:port 并尝试连接 ===
-const parseVlessAndConnect = async (buf) => {
-  const b = new Uint8Array(buf);
-  // t = b[17] 是随机/标志位长度偏移（来自原实现）
-  const t = b[17];
-  // j 指向可能的 ATYP/ADDR段起点，原实现 j = 18 + t
-  const j = 18 + t;
-  // 端口在 j+1、j+2（原偏移），根据原代码计算
-  const port = (b[j + 1] << 8) | b[j + 2];
-  let idx = j + 4; // initial data 起始偏移（按照原实现）
-  let host = '';
-
-  // 使用原来索引位置判断地址类型（原版使用 b[j+3] 或 b[o-1] 的偏移）
-  const atype = b[j + 3];
-  switch (atype) {
-    case 1: // IPv4
-      host = `${b[idx++]}.${b[idx++]}.${b[idx++]}.${b[idx++]}`;
-      break;
-    case 2: { // Domain name
-      const len = b[idx++];
-      host = d.decode(b.subarray(idx, idx + len));
-      idx += len;
-      break;
-    }
-    case 3: // IPv6
-      host = Array.from({ length: 8 }, (_, k) =>
-        ((b[idx + 2 * k] << 8) | b[idx + 2 * k + 1]).toString(16)
-      ).join(':');
-      idx += 16;
-      break;
-    default:
-      throw new Error('未知地址类型: ' + atype);
+const v = async b => {
+  b = new Uint8Array(b);
+  let j = 18 + b[17], P = (b[j + 1] << 8) | b[j + 2], H = '', i = j + 4;
+  switch (b[j + 3]) {
+    case 1: H = `${b[i++]}.${b[i++]}.${b[i++]}.${b[i++]}`; break;
+    case 2: { const l = b[i++]; H = d.decode(b.subarray(i, i + l)); i += l; } break;
+    case 3: H = Array.from({ length: 8 }, (_, k) => ((b[i + 2 * k] << 8) | b[i + 2 * k + 1]).toString(16)).join(':'); i += 16;
   }
-
-  const initialData = b.slice(idx); // 握手后剩余要写入目标的初始数据
-  return tryConnect(host, port, initialData);
+  return t(H, P, b.slice(i));
 };
-
-// === 隧道函数：流式传输 WS <-> TCP（去掉批量 5ms 缓冲） ===
-const tunnel = (ws, tcp, initialData) => {
-  // writer 写入 TCP
-  const writer = tcp.writable.getWriter();
-
-  let cleaned = false;
-  const cleanup = async () => {
-    if (cleaned) return;
-    cleaned = true;
-    try { writer.releaseLock(); } catch (e) { /* ignore */ }
-    try { await tcp.close(); } catch (e) { /* ignore */ }
-    try { ws.close(); } catch (e) { /* ignore */ }
+const m = (w, s, a) => {
+  const x = s.writable.getWriter();
+  w.send(new Uint8Array([0, 0]));
+  a && x.write(a);
+  let b = [], y, z = 0;
+  const q = () => {
+    z || (z = 1, y && clearTimeout(y), x.releaseLock().catch(() => {}), s.close().catch(() => {}), w.close().catch(() => {}), b = null);
   };
-
-  // 先发送握手成功确认给客户端（与原实现一致）
-  try {
-    ws.send(new Uint8Array([0, 0]).buffer);
-  } catch (e) {
-    // 如果 send 失败，直接清理
-    cleanup();
-    return;
-  }
-
-  // 如果有 initialData，立即写入目标 TCP
-  if (initialData && initialData.length) {
-    writer.write(initialData).catch(() => { cleanup(); });
-  }
-
-  // WS -> TCP：收到消息就立即写入 TCP writer（流式）
-  ws.onmessage = ({ data }) => {
-    if (cleaned) return;
-    let chunk;
-    if (data instanceof ArrayBuffer) {
-      chunk = new Uint8Array(data);
-    } else if (typeof data === 'string') {
-      chunk = e.encode(data);
-    } else {
-      // 可能已经是 Uint8Array
-      chunk = data;
-    }
-    // 直接写入（不做额外合并缓冲）
-    writer.write(chunk).catch(() => { cleanup(); });
+  w.onmessage = ({ data }) => {
+    if (z) return;
+    const l = data instanceof ArrayBuffer ? new Uint8Array(data) : e.encode(data);
+    b.push(l);
+    y || (y = setTimeout(() => {
+      if (z) return;
+      const o = b.length === 1 ? b[0] : (() => {
+        let l = 0;
+        b.forEach(c => l += c.length);
+        const d = new Uint8Array(l);
+        let p = 0;
+        return b.forEach(c => (d.set(c, p), p += c.length)), d;
+      })();
+      x.write(o).catch(q);
+      b.length = 0;
+      y = null;
+    }, 5));
   };
-
-  ws.onclose = () => { cleanup(); };
-  ws.onerror = () => { cleanup(); };
-
-  // TCP -> WS：使用 pipeTo 把 tcp.readable 写到一个 WritableStream，write 时直接 ws.send
-  tcp.readable.pipeTo(new WritableStream({
-    write(chunk) {
-      if (cleaned) return;
-      try {
-        // 注意：WebSocket.send 可以接收 ArrayBuffer
-        ws.send(chunk);
-      } catch (e) {
-        // 发送失败则清理
-        cleanup();
-      }
-    },
-    close() { cleanup(); },
-    abort() { cleanup(); }
-  })).catch(() => { cleanup(); });
+  s.readable.pipeTo(new WritableStream({
+    write: d => w.send(d),
+    close: q,
+    abort: q
+  })).catch(q);
+  w.onclose = q;
 };
-
-// === 订阅生成（支持 P 列表 + 当前 host，备注 encodeURIComponent） ===
-const buildConfig = (host) => {
-  const buildOne = (item, defaultRemark = REMARK) => {
-    const [addr, port = 443] = item.split(':');
-    return `vless://${UUID}@${addr}:${port}?encryption=none&security=tls&type=ws&host=${host}&sni=${host}&path=%2F%3Fed%3D2560#${encodeURIComponent(defaultRemark)}`;
+const f = h => {
+  const t = (a, b = n) => {
+    const [H, P = 443] = a.split(':');
+    return `vless://${u}@${H}:${P}?encryption=none&security=tls&type=ws&host=${h}&sni=${h}&path=%2F%3Fed%3D2560#${encodeURIComponent(b)}`;
   };
-  // 先把 P 数组的条目生成，最后再加上 host:443 这一条
-  const lines = P.map(item => {
-    const [raw, remark] = item.split('#');
-    return buildOne(raw, remark || REMARK);
-  });
-  lines.push(buildOne(`${host}:443`, REMARK));
-  return lines.join('\n') + '\n';
+  return p.map(a => {
+    const [c, d] = a.split('#');
+    return t(c, d);
+  }).join('\n') + `\n` + t(h);
 };
-
-// === Worker 主逻辑 ===
 export default {
-  async fetch(req, env) {
-    const { headers, url } = req;
-    const host = headers.get('Host') || new URL(url).host;
-
-    // 非 websocket 请求：返回订阅或提示
+  async fetch(req, env, ctx) {
+    const { headers, url } = req, host = headers.get('Host');
     if (headers.get('Upgrade') !== 'websocket') {
       const { pathname } = new URL(url);
-      if (pathname === `/${I}`) {
-        return new Response(`订阅地址: https://${host}/${I}/vless`);
+      if (pathname === `/${i}`) {
+        return new Response(`订阅地址: https://${host}/${i}/vless`);
       }
-      if (pathname === `/${I}/vless`) {
-        return new Response(buildConfig(host));
+      if (pathname === `/${i}/vless`) {
+        const cache = caches.default;
+        const cacheKey = `https://${host}/${i}/vless`;
+        const cachedResponse = await cache.match(cacheKey);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        const responseBody = f(host);
+        const response = new Response(responseBody, {
+          headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=3600' }
+        });
+        ctx.waitUntil(cache.put(cacheKey, response.clone()));
+        return response;
       }
       return new Response('Hello Worker!');
     }
-
-    // WebSocket 握手处理
     try {
-      const proto = headers.get('sec-websocket-protocol') || '';
-      // WebSocket 协议字段可能被替换 - 先把 URL-safe base64 转回标准 base64，再 atob
-      const b = Uint8Array.from(atob(proto.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
-
-      // 校验 UUID（b.subarray(1,17) 为原实现使用的区间）
-      if (!checkUUID(b.subarray(1, 17))) {
-        return new Response('无效UUID', { status: 403 });
-      }
-
-      // parse VLESS 握手并连接目标
-      const { tcpSocket, initialData } = await parseVlessAndConnect(b.buffer);
-
-      // WebSocketPair（server 与 client） - 在 worker 端我们接管 server
-      const pair = new WebSocketPair();
-      const [client, server] = Object.values(pair);
-
-      server.accept();
-      tunnel(server, tcpSocket, initialData);
-
-      return new Response(null, { status: 101, webSocket: client });
+      const p = headers.get('sec-websocket-protocol'), d = Uint8Array.from(atob(p.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+      if (!c(d.subarray(1, 17))) return new Response('无效UUID', { status: 403 });
+      const { tcpSocket: s, initialData: a } = await v(d.buffer), [C, S] = Object.values(new WebSocketPair);
+      S.accept();
+      m(S, s, a);
+      return new Response(null, { status: 101, webSocket: C });
     } catch (e) {
-      return new Response('连接失败: ' + (e && e.message ? e.message : String(e)), { status: 502 });
+      return new Response('连接失败: ' + e.message, { status: 502 });
     }
   }
 };
