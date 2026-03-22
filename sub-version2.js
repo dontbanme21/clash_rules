@@ -38,7 +38,7 @@ let fakeHostName;
 let httpsPorts = ["2053", "2083", "2087", "2096", "8443"];
 let 有效时间 = 7;
 let 更新时间 = 3;
-let MamaJustKilledAMan = ['fuckua','wget','axios','go-resty','cf-workers-sub','mozilla','koipy','周润发公益订阅器','workervless2sub','telegram','twitter','python-requests','webrequesthelper','miaoko'];
+let MamaJustKilledAMan = ['wget','axios','go-resty','cf-workers-sub','mozilla','koipy','周润发公益订阅器','workervless2sub','telegram','twitter','python-requests','webrequesthelper','miaoko'];
 let myforbiddenhost = ['cfxr.eu.org','o0w0o.qzz.io','3333r567.11890604.xyz','ekt.me','www.bing.com','lzj.pp.ua','lzjnb.shop'];
 let proxyIPPool = [];
 let socks5Data;
@@ -1364,7 +1364,7 @@ export default {
 		} else 网站背景 = '';
 		网络备案 = env.BEIAN || env.BY || 网络备案;
 		const userAgentHeader = request.headers.get('User-Agent');
-		const userAgent = userAgentHeader ? userAgentHeader.toLowerCase() : "fuckua/1.1";
+		const userAgent = userAgentHeader ? userAgentHeader.toLowerCase() : "null";
 		const url = new URL(request.url);
 		const format = url.searchParams.get('format') ? url.searchParams.get('format').toLowerCase() : "null";
 		let host = "";
